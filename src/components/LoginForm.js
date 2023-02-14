@@ -35,23 +35,39 @@ function LoginForm({ existingUser }) {
     }
   }
 
+  async function handleLoginWithGoogle() {
+    try {
+      await FirebaseAuthService.loginWithGoogle();
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+
+  async function handleRegister() {
+    try {
+      await FirebaseAuthService.registerUser(username, password);
+    } catch (error) {
+      alert(error.message);
+    }
+  }
   return (
     <div className="login-form-container">
       {existingUser ? (
         <div className="row">
-          <h3>Welcome, {existingUser.email}</h3>
+          <h3>Csá, {existingUser.email}</h3>
           <button
             type="button"
             className="primary-button"
             onClick={handleLogout}
           >
-            Logout
+            Kijelentkezés
           </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="login-form">
           <label className="input-label login-label">
-            Username (email):
+            Felhasználónév (email):
             <input
               type="email"
               required
@@ -61,7 +77,7 @@ function LoginForm({ existingUser }) {
             />
           </label>
           <label className="input-label login-label">
-            Password:
+            Jelszó:
             <input
               type="password"
               required
@@ -71,14 +87,16 @@ function LoginForm({ existingUser }) {
             />
           </label>
           <div className="button-box">
-            <button className="primary-button">Login</button>
+            <button className="primary-button">Bejelentkezés</button>
             <button
               type="button"
               onClick={handleSendResetPasswordEmail}
               className="primary-button"
             >
-              Reset Password
+              Jelszó visszaállítása
             </button>
+            <button type="button" className="primary-button" onClick={handleLoginWithGoogle}>Google</button>
+            <button onClick={handleRegister} type="button" className="primary-button" >Regisztráció</button>
           </div>
         </form>
       )}
