@@ -1,18 +1,17 @@
-import { useEffect, useState } from 'react';
-import FirebaseAuthService from './FirebaseAuthService';
-import LoginForm from './components/LoginForm';
-import AddEditRecipeForm from './components/AddEditRecipeForm';
-import { startTransition } from 'react';
-import './App.css';
-import FirebaseFirestoreService from './FirebaseFirestoreService';
+import { useEffect, useState } from "react";
+import FirebaseAuthService from "./FirebaseAuthService";
+import LoginForm from "./components/LoginForm";
+import AddEditRecipeForm from "./components/AddEditRecipeForm";
+import "./App.css";
+import FirebaseFirestoreService from "./FirebaseFirestoreService";
 
 function App() {
   const [user, setUser] = useState(null);
   const [currentRecipe, setCurrentRecipe] = useState(null);
   const [recipes, setRecipes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [categoryFilter, setCategoryFilter] = useState('');
-  const [orderBy, setOrderBy] = useState('publishDateDesc');
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [orderBy, setOrderBy] = useState("publishDateDesc");
   const [recipesPerPage, setRecipesPerPage] = useState(3);
 
   useEffect(() => {
@@ -35,35 +34,35 @@ function App() {
 
   FirebaseAuthService.subscribeToAuthChanges(setUser);
 
-  async function fetchRecipes(cursorId = '') {
+  async function fetchRecipes(cursorId = "") {
     const queries = [];
 
     if (categoryFilter) {
       queries.push({
-        field: 'category',
-        condition: '==',
+        field: "category",
+        condition: "==",
         value: categoryFilter,
       });
     }
 
     if (!user) {
       queries.push({
-        field: 'isPublished',
-        condition: '==',
+        field: "isPublished",
+        condition: "==",
         value: true,
       });
     }
 
-    const orderByField = 'publishDate';
+    const orderByField = "publishDate";
     let orderByDirection;
 
     if (orderBy) {
       switch (orderBy) {
-        case 'publishDateAsc':
-          orderByDirection = 'asc';
+        case "publishDateAsc":
+          orderByDirection = "asc";
           break;
-        case 'publishDateDesc':
-          orderByDirection = 'desc';
+        case "publishDateDesc":
+          orderByDirection = "desc";
           break;
         default:
           break;
@@ -74,7 +73,7 @@ function App() {
 
     try {
       const response = await FirebaseFirestoreService.readDocuments({
-        collection: 'recipes',
+        collection: "recipes",
         queries: queries,
         orderByField: orderByField,
         orderByDirection: orderByDirection,
@@ -117,7 +116,7 @@ function App() {
     handleFetchRecipes(cursorId);
   }
 
-  async function handleFetchRecipes(cursorId = '') {
+  async function handleFetchRecipes(cursorId = "") {
     try {
       const fetchedRecipes = await fetchRecipes(cursorId);
 
@@ -131,7 +130,7 @@ function App() {
   async function handleAddRecipe(newRecipe) {
     try {
       const response = await FirebaseFirestoreService.createDocument(
-        'recipes',
+        "recipes",
         newRecipe
       );
 
@@ -146,7 +145,7 @@ function App() {
   async function handleUpdateRecipe(newRecipe, recipeId) {
     try {
       await FirebaseFirestoreService.updateDocument(
-        'recipes',
+        "recipes",
         recipeId,
         newRecipe
       );
@@ -163,12 +162,12 @@ function App() {
 
   async function handleDeleteRecipe(recipeId) {
     const deleteConfirmtion = window.confirm(
-      'Are you sure you want to delete this recipe? OK for Yes. Cancel for No.'
+      "Are you sure you want to delete this recipe? OK for Yes. Cancel for No."
     );
 
     if (deleteConfirmtion) {
       try {
-        await FirebaseFirestoreService.deleteDocument('recipes', recipeId);
+        await FirebaseFirestoreService.deleteDocument("recipes", recipeId);
 
         handleFetchRecipes();
 
@@ -188,11 +187,9 @@ function App() {
     const selectedRecipe = recipes.find((recipe) => {
       return recipe.id === recipeId;
     });
-  
+
     if (selectedRecipe) {
-      startTransition(() => {
         setCurrentRecipe(selectedRecipe);
-      });
       window.scrollTo(0, document.body.scrollHeight);
     }
   }
@@ -203,11 +200,11 @@ function App() {
 
   function lookupCategoryLabel(categoryKey) {
     const categories = {
-      breadsSandwichesAndPizza: 'Breads, Sandwiches, and Pizza',
-      eggsAndBreakfast: 'Eggs & Breakfast',
-      dessertsAndBakedGoods: 'Desserts & Baked Goods',
-      fishAndSeafood: 'Fish & Seafood',
-      vegetables: 'Vegetables',
+      breadsSandwichesAndPizza: "Breads, Sandwiches, and Pizza",
+      eggsAndBreakfast: "Eggs & Breakfast",
+      dessertsAndBakedGoods: "Desserts & Baked Goods",
+      fishAndSeafood: "Fish & Seafood",
+      vegetables: "Vegetables",
     };
 
     const label = categories[categoryKey];
